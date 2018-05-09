@@ -3,7 +3,7 @@
  * 对学生进行增删改查等操作<br/>
  * Copyright (c) 2018 Xily.All Rights Reserved.<br/>
  * @author 曾宏健 221701423 572089608@qq.com
- * @date 2018.5.5
+ * @date 2018.5.10
  */
 
 #include "student.h"
@@ -570,7 +570,7 @@ void Student::sortData() {
               });
     if (dbHelper.setValue(value)) {
         cout << "排序完成!" << endl;
-    }else {
+    } else {
         cout << "排序失败!" << endl;
     }
 }
@@ -621,8 +621,13 @@ void Student::countData() {
         cout << setw(30) << types[by[j]];
     }
     cout << "数量" << endl;
-    showCountData(vecs, 0, value, by);
+    map<string, int> analyze; //存储要分析的数据
+    showCountData(vecs, 0, value, by, analyze);
     drawLine('-', 30);
+    if (!analyze.empty()) {
+        analyzeData(analyze);
+        drawLine('-', 30);
+    }
 }
 
 /**
@@ -631,25 +636,54 @@ void Student::countData() {
 * @param i 下标
 * @param value json容器
 * @param by 条件
+* @param analyze 分析数据,回调
 */
 void Student::showCountData(const vector<vector<string>>& vecs,
                             const unsigned i,
                             const Json::Value& value,
-                            int by[]) const {
+                            int by[],
+                            map<string, int>& analyze) const {
     if (i < vecs.size()) {
         for (unsigned j = 0; j < vecs[i].size(); j++) {
             const Json::Value&& value1 = DbHelper::findAll(value, keys[by[i]], vecs[i][j]);
             if (!value1.isNull()) {
-                showCountData(vecs, i + 1, value1, by); //递归查询符合条件的值
+                showCountData(vecs, i + 1, value1, by, analyze); //递归查询符合条件的值
             }
         }
     } else {
         //递归完毕，开始展示数据
+        stringstream s;
         for (unsigned j = 0; j < i; j++) {
             cout << setw(30) << value[0][keys[by[j]]].asString();
+            if (j > 0)s << "，";
+            s << types[by[j]] << "为" << value[0][keys[by[j]]].asString(); //构造分析文本
         }
         cout << value.size() << endl;
+        analyze[s.str()] = value.size(); //保存数量
     }
+}
+
+/**
+ * 数据分析
+ * @param analyze 要分析的数据 
+ */
+void Student::analyzeData(const map<string, int>& analyze) {
+    cout << "数据分析：" << endl;
+    int sum = 0;
+    pair<string, int> minPair{"", 0}, maxPair{"", 0};
+    for (auto& pair : analyze) {
+        if (minPair.second == 0 || pair.second < minPair.second) {
+            minPair = pair;
+        }else if (pair.second > maxPair.second) {
+            maxPair = pair;
+        }
+        sum += pair.second;
+    }
+    cout << "数量之和为" << sum << endl
+        << maxPair.first << "的数量最多,数量为" << maxPair.second
+        << ",占比为" << (double(maxPair.second) / sum * 100) << "%" << endl
+        << minPair.first << "的数量最少,数量为" << minPair.second
+        << ",占比为" << (double(minPair.second) / sum * 100) << "%" << endl;
 }
 
 /**
@@ -730,7 +764,12 @@ string Student::checkBirthDate(const string& birthDate) {
         << setfill('0') << setw(2) << month
         << setfill('0') << setw(2) << day;
     birthDateFormat = out.str();
-    return to_string(year) + "." + to_string(month) + "." + to_string(day);
+    stringstream out2;
+    //日期补零,方便之后的排序操作
+    out2 << setfill('0') << setw(4) << year << '.'
+        << setfill('0') << setw(2) << month << '.'
+        << setfill('0') << setw(2) << day;
+    return out2.str();
 }
 
 /**
@@ -813,7 +852,12 @@ string Student::checkInDate(const string& inDate) const {
     if (year != inYear) {
         throw CheckException("入学年份必须与学号的入学年份一致!");
     }
-    return to_string(year) + "." + to_string(month) + "." + to_string(day);
+    stringstream out;
+    //日期补零,方便之后的排序操作
+    out << setfill('0') << setw(4) << year << '.'
+        << setfill('0') << setw(2) << month << '.'
+        << setfill('0') << setw(2) << day;
+    return out.str();
 }
 
 /**

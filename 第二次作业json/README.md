@@ -1,4 +1,5 @@
-##第二次作业的json版本
+第二次作业的json版本
+===
 * 使用了第三方类库jsoncpp : https://github.com/open-source-parsers/jsoncpp 
 * 更方便的进行数据的存取~~~(偷懒，本来想用sqlite进一步的偷懒的，不过觉得太高端了有点那啥)
 * jsoncpp具体怎么用看下代码应该就能明白了

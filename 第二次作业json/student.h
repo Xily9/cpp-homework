@@ -67,7 +67,13 @@ private:
     void deleteData(const string& major, const string& grade);
     void deleteByIndex(int index);
     void editByIndex(int index);
-    void showCountData(const vector<vector<string>>& vecs, unsigned i, const Json::Value& value, int by[]) const;
+    void showCountData(const vector<vector<string>>& vecs,
+        unsigned i,
+        const Json::Value& value,
+        int by[],
+        map<string, int>& analyze
+        ) const;
+    static void analyzeData(const map<string, int>& analyze);
     string checkId(const string& id);
     string checkBirthDate(const string& birthDate);
     string checkSex(const string& sex);
