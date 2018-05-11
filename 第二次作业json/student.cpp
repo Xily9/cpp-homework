@@ -695,6 +695,9 @@ string Student::checkId(const string& id) {
     if (!isInt(id)) {
         throw CheckException("学号必须为数字!");
     }
+    if (id.size() != 9) {
+        throw CheckException("学号长度必须为9位!");
+    }
     if (dbHelper.findById(id) >= 0) {
         throw CheckException("该学号已经被添加过!");
     }
@@ -706,6 +709,10 @@ string Student::checkId(const string& id) {
     }
     Json::Value&& value = dbHelper2.get(index);
     const int year = stoi(id.substr(2, 2)) + 2000;
+    const int now = getTime()->tm_year + 1900;
+    if (year > now) {
+        throw CheckException("学号中的入学年份有误!");
+    }
     if (getTime()->tm_year + 1900 != year) {
         cout << "学号中的入学年份与当前年份不一致!" << endl; //只发出警告
     }
@@ -779,6 +786,9 @@ string Student::checkBirthDate(const string& birthDate) {
 */
 string Student::checkPersonId(const string& personId) const {
     if (!isChinese && !isInt(personId))return ""; //不是中国人可能没身份证
+    if (!isInt(personId)) {
+        throw CheckException("身份证号码必须为数字!");
+    }
     if (personId.size() != 18) {
         throw CheckException("身份证号码必须为18位!");
     }
@@ -811,7 +821,7 @@ string Student::checkPersonId(const string& personId) const {
 string Student::checkName(const string& name) const {
     if (isChinese) {
         if (name.size() < 4 || name.size() > 40 || !isAllChinese(name)) {
-            throw CheckException("姓名必须为二到十个汉字!");
+            throw CheckException("姓名必须为二到二十个汉字!");
         }
     } else {
         if (name.size() > 40 || name.empty()) {
@@ -827,6 +837,12 @@ string Student::checkName(const string& name) const {
 * @return 年级
 */
 string Student::checkGrade(const string& grade) const {
+    if (!isInt(grade)) {
+        throw CheckException("年级必须为数字!");
+    }
+    if (grade < to_string(inYear)) {
+        throw CheckException("输入的年级必须大于等于入学年份!");
+    }
     if (grade != to_string(inYear)) {
         cout << "输入的年级与学号上的年级不一致!" << endl; //只是发出警告
     }
@@ -866,6 +882,9 @@ string Student::checkInDate(const string& inDate) const {
 * @return 班级信息
 */
 string Student::checkClass(const string& cls) const {
+	if (!isInt(cls)) {
+        throw CheckException("班级必须为数字!");
+    }
     const int c = stoi(cls);
     if (c < 1 || c > 10) {
         throw CheckException("班级号必须在1-10之间!");
