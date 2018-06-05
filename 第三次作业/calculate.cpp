@@ -1,3 +1,14 @@
+/**
+* 计算类实现文件<br/>
+* Copyright (c) 2018 Xily.All Rights Reserved.<br/>
+* 运行环境建议为Visual Studio 2017<br/>
+* 最低要求编译器支持C++11，否则程序将无法运行<br/>
+* 注意：该项目必须运行在Windows系统下<br/>
+* 该项目在Visual Studio 2017和Mingw gcc on windows 6.3.0(using g++ command with -std=c++11)下编译通过<br/>
+* @author 曾宏健 221701423 572089608@qq.com
+* @date 2018.6.4
+*/
+
 #include <stack>
 #include "hugeInt.h"
 #include "calculate.h"
@@ -83,7 +94,7 @@ stack<string> Calculate::getRpn(string expression) {
     }
     while (!s1.empty()) {
         if(s1.top()=='(') {
-            throw exception("Unclosed bracket!");
+            throw ParseException("Unclosed bracket!");
         }
         s2.push(string(1, s1.top()));
         s1.pop();
@@ -117,7 +128,7 @@ HugeInt Calculate::doRpn(stack<string> rpn) {
         rpn.pop();
         if (temp == "+" || temp == "-" || temp == "*" || temp == "/" || temp == "%" || temp == "^" || temp == "!") {
             if (stack.size() < 2) {
-                throw exception("Illegal expression!");
+                throw ParseException("Illegal expression!");
             }
             const HugeInt h1(stack.top());
             stack.pop();
