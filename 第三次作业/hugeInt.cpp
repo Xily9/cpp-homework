@@ -17,6 +17,7 @@
 #include <climits>
 #include <vector>
 #include <ctime>
+#include <cstdlib>
 using namespace std;
 
 /**
@@ -239,10 +240,10 @@ HugeInt& HugeInt::multiply(const HugeInt& hugeInt) {
             HugeInt bHuge;
             string result;
             if (check1) {
-                aint = int(*this);
+                aint = std::abs(int(*this));
                 bHuge = hugeInt;
             } else {
-                aint = int(hugeInt);
+                aint = std::abs(int(hugeInt));
                 bHuge = *this;
             }
             string temp(bHuge.number);
