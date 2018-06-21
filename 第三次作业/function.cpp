@@ -200,8 +200,11 @@ void showSystemMenu() {
 void testOthers() {
     const clock_t start = clock();
     try {
-        cout << "HugeInt a = HugeInt(\"1\")" << endl;
+        cout << "测试一些构造" << endl;
+        TEST(HugeInt(-2147483647L-1)==HugeInt("-2147483648"));
+        TEST(HugeInt("-0")==HugeInt(0));
         cout << "测试前后++ --" << endl;
+        cout << "HugeInt a = HugeInt(\"1\")" << endl;
         HugeInt a = HugeInt("1");
         TEST(a++ == HugeInt("1"));
         TEST(++a == HugeInt("3"));
